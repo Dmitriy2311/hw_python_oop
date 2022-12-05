@@ -1,12 +1,15 @@
+from dataclasses import dataclass
+from typing import Type
+
+
+@dataclass
 class InfoMessage:
     """Информационное сообщение о тренировке."""
-
-    def __init__(self, training_type, duration, distance, speed, calories):
-        self.training_type = training_type
-        self.duration = duration
-        self.distance = distance
-        self.speed = speed
-        self.calories = calories
+    training_type: str
+    duration: float
+    distance: float
+    speed: float
+    calories: float
 
     def get_message(self) -> str:
         return (f'Тип тренировки: {self.training_type}; '
@@ -27,14 +30,14 @@ class Training:
                  duration: float,
                  weight: float,
                  ) -> None:
-        self.action = action
-        self.duration = duration
-        self.weight = weight
+        self.action: int = action
+        self.duration: float = duration
+        self.weight: float = weight
 
     def get_distance(self) -> float:
         """Получить дистанцию в км."""
-        self.distance = self.action * self.LEN_STEP / self.M_IN_KM
-        return self.distance
+        distance = self.action * self.LEN_STEP / self.M_IN_KM
+        return distance
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
@@ -43,7 +46,7 @@ class Training:
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        pass
+        raise NotImplementedError("Метод не определен в дочернем классе")
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
@@ -59,12 +62,6 @@ class Running(Training):
     """Тренировка: бег."""
     CALORIES_MEAN_SPEED_MULTIPLIER: int = 18
     CALORIES_MEAN_SPEED_SHIFT: float = 1.79
-
-    def __init__(self,
-                 action: int,
-                 duration: float,
-                 weight: float) -> None:
-        super().__init__(action, duration, weight)
 
     def get_distance(self) -> float:
         return (super().get_distance())
@@ -97,7 +94,7 @@ class SportsWalking(Training):
                  weight: float,
                  height: float) -> None:
         super().__init__(action, duration, weight)
-        self.height = height
+        self.height: float = height
 
     def get_mean_distance(self) -> float:
         return super().get_distance()
@@ -133,8 +130,8 @@ class Swimming(Training):
         super().__init__(action,
                          duration,
                          weight)
-        self.length_pool = length_pool
-        self.count_pool = count_pool
+        self.length_pool: float = length_pool
+        self.count_pool: float = count_pool
 
     def get_distance(self) -> float:
         return (super().get_distance())
@@ -154,11 +151,13 @@ class Swimming(Training):
         return super().show_training_info()
 
 
-def read_package(workout_type: str, data: list) -> Training:
+def read_package(workout_type: str, data: list[int]) -> Training:
     """Прочитать данные полученные от датчиков."""
-    training_type = {'SWM': Swimming,
-                     'RUN': Running,
-                     'WLK': SportsWalking}
+    training_type: dict[str, Type[Training]] = {'SWM': Swimming,
+                                                'RUN': Running,
+                                                'WLK': SportsWalking}
+    if workout_type not in training_type:
+        raise KeyError('Данный тип тренировки отсутствует.')
     training: Training = training_type[workout_type](*data)
     return training
 
