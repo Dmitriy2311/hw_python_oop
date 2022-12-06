@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Type
+from typing import Type, Dict, List
 
 
 @dataclass
@@ -151,9 +151,9 @@ class Swimming(Training):
         return super().show_training_info()
 
 
-def read_package(workout_type: str, data: list[int]) -> Training:
+def read_package(workout_type: str, data: List[int]) -> Training:
     """Прочитать данные полученные от датчиков."""
-    training_type: dict[str, Type[Training]] = {'SWM': Swimming,
+    training_type: Dict[str, Type[Training]] = {'SWM': Swimming,
                                                 'RUN': Running,
                                                 'WLK': SportsWalking}
     if workout_type not in training_type:
