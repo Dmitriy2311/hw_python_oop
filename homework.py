@@ -36,17 +36,16 @@ class Training:
 
     def get_distance(self) -> float:
         """Получить дистанцию в км."""
-        distance = self.action * self.LEN_STEP / self.M_IN_KM
-        return distance
+        return self.action * self.LEN_STEP / self.M_IN_KM
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
-        self.speed = self.get_distance() / self.duration
-        return self.speed
+        return self.get_distance() / self.duration
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        raise NotImplementedError("Метод не определен в дочернем классе")
+        raise NotImplementedError(
+            "Метод не определен в дочернем классе" (self.__class__.__name__))
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
@@ -62,12 +61,6 @@ class Running(Training):
     """Тренировка: бег."""
     CALORIES_MEAN_SPEED_MULTIPLIER: int = 18
     CALORIES_MEAN_SPEED_SHIFT: float = 1.79
-
-    def get_distance(self) -> float:
-        return (super().get_distance())
-
-    def get_mean_speed(self) -> float:
-        return (super().get_mean_speed())
 
     def get_spent_calories(self) -> float:
         self.calories = (
@@ -95,12 +88,6 @@ class SportsWalking(Training):
                  height: float) -> None:
         super().__init__(action, duration, weight)
         self.height: float = height
-
-    def get_mean_distance(self) -> float:
-        return super().get_distance()
-
-    def get_mean_speed(self) -> float:
-        return super().get_mean_speed()
 
     def get_spent_calories(self):
         self.calories = ((self.CALORIES_WEIGHT_MULTIPLIER * self.weight
@@ -133,9 +120,6 @@ class Swimming(Training):
         self.length_pool: float = length_pool
         self.count_pool: float = count_pool
 
-    def get_distance(self) -> float:
-        return (super().get_distance())
-
     def get_mean_speed(self) -> float:
         return (self.length_pool * self.count_pool / self.M_IN_KM
                 / self.duration)
@@ -157,7 +141,7 @@ def read_package(workout_type: str, data: List[int]) -> Training:
                                                 'RUN': Running,
                                                 'WLK': SportsWalking}
     if workout_type not in training_type:
-        raise KeyError('Данный тип тренировки отсутствует.')
+        raise KeyError(f'Данный тип тренировки - {workout_type} отсутствует.')
     training: Training = training_type[workout_type](*data)
     return training
 
